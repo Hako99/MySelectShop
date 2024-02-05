@@ -4,6 +4,7 @@ import com.sparta.spring0402myselectshop.dto.ProductMypriceRequestDto;
 import com.sparta.spring0402myselectshop.dto.ProductRequestDto;
 import com.sparta.spring0402myselectshop.dto.ProductResponseDto;
 import com.sparta.spring0402myselectshop.entity.Product;
+import com.sparta.spring0402myselectshop.entity.User;
 import com.sparta.spring0402myselectshop.naver.dto.ItemDto;
 import com.sparta.spring0402myselectshop.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +21,8 @@ public class ProductService {
     private final ProductRepository productRepository;
     public static final int MIN_MY_PRICE = 100;
 
-    public ProductResponseDto createProduct(ProductRequestDto requestDto) {
-        Product product = productRepository.save(new Product(requestDto));
+    public ProductResponseDto createProduct(ProductRequestDto requestDto, User user) {
+        Product product = productRepository.save(new Product(requestDto,user));
         return new ProductResponseDto(product);
     }
 
@@ -40,8 +41,8 @@ public class ProductService {
         return new ProductResponseDto(product);
     }
 
-    public List<ProductResponseDto> getProducts() {
-        List<Product> productList = productRepository.findAll();
+    public List<ProductResponseDto> getProducts(User user) {
+        List<Product> productList = productRepository.findAllByUser(user);
         List<ProductResponseDto> responseDtoList = new ArrayList<>();
 
         for (Product product : productList) {
@@ -58,5 +59,16 @@ public class ProductService {
         );
 
         product.updateByItemDto(itemDto);
+    }
+
+    public List<ProductResponseDto> getAllProducts() {
+        List<Product> productList = productRepository.findAll();
+        List<ProductResponseDto> responseDtoList = new ArrayList<>();
+
+        for (Product product : productList) {
+            responseDtoList.add(new ProductResponseDto(product));
+        }
+
+        return responseDtoList;
     }
 }
